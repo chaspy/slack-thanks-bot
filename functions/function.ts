@@ -39,16 +39,29 @@ export default SlackFunction(FunctionDefinition, async ({ inputs, client }) => {
   console.log(`parsedarray: ${parsedMsg}`);
 
   const uuid = crypto.randomUUID();
+  const user_id = parsedMsg[0];
+  const msg = parsedMsg[1];
 
   const thanksObject = {
-    user_id: parsedMsg[0],
-    message: parsedMsg[1],
+    user_id: user_id,
+    message: msg,
     thanks_id: uuid,
   };
 
   console.log(thanksObject);
 
-  /*
+  // get count of thanks for the user
+  let result = await client.apps.datastore.query({
+    datastore: "thanks",
+    expression: "#user_id = :user_id",
+    expression_attributes: { "#user_id": "user_id" },
+    expression_values: { ":user_id": user_id },
+  });
+
+  console.log(result);
+  console.log(result.items.length);
+  const count = result.items.length;
+
   // Save the sample object to the datastore
   // https://api.slack.com/future/datastores
   const putResponse = await client.apps.datastore.put<
@@ -68,9 +81,8 @@ export default SlackFunction(FunctionDefinition, async ({ inputs, client }) => {
     res = "Datastore put successful!";
     console.log(res);
   }
-  */
 
-  const response = "hello!!!!";
+  const response = `@${user_id} was thanked ${count} times :tada:`;
   return { outputs: { response } };
 });
 
