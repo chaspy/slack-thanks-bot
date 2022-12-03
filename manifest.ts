@@ -10,7 +10,7 @@ import SampleObjectDatastore from "./datastores/sample_datastore.ts";
 export default Manifest({
   name: "thanks",
   description: "Remember and reply a count of thanks",
-  icon: "assets/default_new_app_icon.png",
+  icon: "assets/thanks.png",
   workflows: [SampleWorkflow],
   outgoingDomains: [],
   datastores: [SampleObjectDatastore],
