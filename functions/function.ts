@@ -41,8 +41,8 @@ export default SlackFunction(FunctionDefinition, async ({ inputs, client }) => {
   const uuid = crypto.randomUUID();
 
   const thanksObject = {
-    message: parsedMsg[1],
     user_id: parsedMsg[0],
+    message: parsedMsg[1],
     thanks_id: uuid,
   };
 
