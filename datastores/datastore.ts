@@ -18,9 +18,6 @@ const ThanksDatastore = DefineDatastore({
     message: {
       type: Schema.types.string,
     },
-    count: {
-      type: Schema.types.number,
-    },
   },
 });
 

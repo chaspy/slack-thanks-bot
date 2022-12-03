@@ -35,15 +35,18 @@ export const FunctionDefinition = DefineFunction({
 export default SlackFunction(FunctionDefinition, async ({ inputs, client }) => {
   const { message } = inputs;
   console.log(`inputs: ${message}`);
+  const parsedMsg = parseInputs(message);
+  console.log(`parsedarray: ${parsedMsg}`);
 
   const uuid = crypto.randomUUID();
 
   const thanksObject = {
-    message: "hello",
-    user_id: "@chaspy",
+    message: parsedMsg[1],
+    user_id: parsedMsg[0],
     thanks_id: uuid,
-    count: 1,
   };
+
+  console.log(thanksObject);
 
   /*
   // Save the sample object to the datastore
@@ -70,3 +73,18 @@ export default SlackFunction(FunctionDefinition, async ({ inputs, client }) => {
   const response = "hello!!!!";
   return { outputs: { response } };
 });
+
+/**
+ * @param {string}  input - input text from users
+ * @returns {string[]} return array of splited input text. the array length is 2.
+ */
+function parseInputs(input: string): string[] {
+  const regex = /^<@(.*)> <@(.*)> (.*)$/;
+  const found = input.match(regex);
+  console.log(`found: ${found}`);
+  //  const bot_id = found ? found[1] : "";
+  const user_id = found ? found[2] : "";
+  const message = found ? found[3] : "";
+
+  return [user_id, message];
+}
