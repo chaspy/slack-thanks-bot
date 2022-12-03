@@ -1,6 +1,6 @@
 import { Manifest } from "deno-slack-sdk/mod.ts";
-import SampleWorkflow from "./workflows/sample_workflow.ts";
-import SampleObjectDatastore from "./datastores/sample_datastore.ts";
+import Workflow from "./workflows/workflow.ts";
+import ThanksDatastore from "./datastores/datastore.ts";
 
 /**
  * The app manifest contains the app's configuration. This
@@ -11,13 +11,14 @@ export default Manifest({
   name: "thanks",
   description: "Remember and reply a count of thanks",
   icon: "assets/thanks.png",
-  workflows: [SampleWorkflow],
+  workflows: [Workflow],
   outgoingDomains: [],
-  datastores: [SampleObjectDatastore],
+  datastores: [ThanksDatastore],
   botScopes: [
     "commands",
     "chat:write",
     "chat:write.public",
+    "app_mentions:read",
     "datastore:read",
     "datastore:write",
   ],
