@@ -8,8 +8,8 @@ import SampleObjectDatastore from "./datastores/sample_datastore.ts";
  * https://api.slack.com/future/manifest
  */
 export default Manifest({
-  name: "stoic-gorilla-182",
-  description: "A template for building Slack apps with Deno",
+  name: "thanks",
+  description: "Remember and reply a count of thanks",
   icon: "assets/default_new_app_icon.png",
   workflows: [SampleWorkflow],
   outgoingDomains: [],
