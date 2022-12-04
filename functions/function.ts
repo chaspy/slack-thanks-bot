@@ -37,60 +37,69 @@ export const FunctionDefinition = DefineFunction({
   },
 });
 
-export default SlackFunction(FunctionDefinition, async ({ inputs, client }) => {
-  console.log(inputs);
-  const { message } = inputs;
-  console.log(`inputs: ${message}`);
-  const parsedMsg = parseInputs(message);
-  console.log(`parsedarray: ${parsedMsg}`);
+export default SlackFunction(
+  FunctionDefinition,
+  async ({ inputs, client, env }) => {
+    console.log(inputs);
+    const { message } = inputs;
+    console.log(`inputs: ${message}`);
+    const parsedMsg = parseInputs(message);
+    console.log(`parsedarray: ${parsedMsg}`);
 
-  const uuid = crypto.randomUUID();
-  const user_id = parsedMsg[0];
-  const msg = parsedMsg[1];
+    const uuid = crypto.randomUUID();
+    const bot_id = parsedMsg[0];
+    const user_id = parsedMsg[1];
+    const msg = parsedMsg[2];
 
-  const thanksObject = {
-    user_id: user_id,
-    message: msg,
-    thanks_id: uuid,
-  };
+    // early return
+    if (bot_id != env["BOT_ID"]) {
+      console.log("The mentioned app is not thanks bot.");
+    }
 
-  console.log(thanksObject);
+    const thanksObject = {
+      user_id: user_id,
+      message: msg,
+      thanks_id: uuid,
+    };
 
-  // get count of thanks for the user
-  let result = await client.apps.datastore.query({
-    datastore: "thanks",
-    expression: "#user_id = :user_id",
-    expression_attributes: { "#user_id": "user_id" },
-    expression_values: { ":user_id": user_id },
-  });
+    console.log(thanksObject);
 
-  console.log(result);
-  console.log(result.items.length);
-  const count = result.items.length;
+    // get count of thanks for the user
+    let result = await client.apps.datastore.query({
+      datastore: "thanks",
+      expression: "#user_id = :user_id",
+      expression_attributes: { "#user_id": "user_id" },
+      expression_values: { ":user_id": user_id },
+    });
 
-  // Save the sample object to the datastore
-  // https://api.slack.com/future/datastores
-  const putResponse = await client.apps.datastore.put<
-    typeof ThanksDatastore.definition
-  >(
-    {
-      datastore: "Thanks",
-      item: thanksObject,
-    },
-  );
+    console.log(result);
+    console.log(result.items.length);
+    const count = result.items.length;
 
-  let res = "";
-  if (!putResponse.ok) {
-    res = "Error calling apps.datastore.put:";
-    console.log(res);
-  } else {
-    res = "Datastore put successful!";
-    console.log(res);
-  }
+    // Save the sample object to the datastore
+    // https://api.slack.com/future/datastores
+    const putResponse = await client.apps.datastore.put<
+      typeof ThanksDatastore.definition
+    >(
+      {
+        datastore: "Thanks",
+        item: thanksObject,
+      },
+    );
 
-  const response = `<@${user_id}> was thanked ${count} times :tada:`;
-  return { outputs: { response } };
-});
+    let res = "";
+    if (!putResponse.ok) {
+      res = "Error calling apps.datastore.put:";
+      console.log(res);
+    } else {
+      res = "Datastore put successful!";
+      console.log(res);
+    }
+
+    const response = `<@${user_id}> was thanked ${count} times :tada:`;
+    return { outputs: { response } };
+  },
+);
 
 /**
  * @param {string}  input - input text from users
@@ -100,9 +109,9 @@ function parseInputs(input: string): string[] {
   const regex = /^<@(.*)> <@(.*)> (.*)$/;
   const found = input.match(regex);
   console.log(`found: ${found}`);
-  //  const bot_id = found ? found[1] : "";
+  const bot_id = found ? found[1] : "";
   const user_id = found ? found[2] : "";
   const message = found ? found[3] : "";
 
-  return [user_id, message];
+  return [bot_id, user_id, message];
 }
