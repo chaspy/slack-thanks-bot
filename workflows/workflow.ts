@@ -18,6 +18,9 @@ const Workflow = DefineWorkflow({
       channelId: {
         type: Schema.slack.types.channel_id,
       },
+      userId: {
+        type: Schema.slack.types.user_id,
+      },
     },
     required: ["channelId"],
   },
@@ -25,6 +28,7 @@ const Workflow = DefineWorkflow({
 
 const FunctionStep = Workflow.addStep(FunctionDefinition, {
   message: Workflow.inputs.text,
+  user_id: Workflow.inputs.userId,
 });
 
 Workflow.addStep(Schema.slack.functions.SendMessage, {

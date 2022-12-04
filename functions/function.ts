@@ -1,4 +1,5 @@
 import { DefineFunction, Schema, SlackFunction } from "deno-slack-sdk/mod.ts";
+import SchemaTypes from "https://deno.land/x/deno_slack_sdk@1.4.2/schema/schema_types.ts";
 import ThanksDatastore from "../datastores/datastore.ts";
 
 /**
@@ -18,6 +19,10 @@ export const FunctionDefinition = DefineFunction({
         type: Schema.types.string,
         description: "Message to the bot",
       },
+      user_id: {
+        type: Schema.slack.types.user_id,
+        description: "user id of the person who made the mentions",
+      },
     },
     required: ["message"],
   },
@@ -33,6 +38,7 @@ export const FunctionDefinition = DefineFunction({
 });
 
 export default SlackFunction(FunctionDefinition, async ({ inputs, client }) => {
+  console.log(inputs);
   const { message } = inputs;
   console.log(`inputs: ${message}`);
   const parsedMsg = parseInputs(message);

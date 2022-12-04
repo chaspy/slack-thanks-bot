@@ -23,6 +23,9 @@ const Trigger: Trigger<typeof Workflow.definition> = {
     text: {
       value: "{{data.text}}",
     },
+    userId: {
+      value: "{{data.user_id}}",
+    },
   },
 };
 
