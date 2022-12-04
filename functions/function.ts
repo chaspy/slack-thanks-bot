@@ -51,9 +51,14 @@ export default SlackFunction(
     const user_id = parsedMsg[1];
     const msg = parsedMsg[2];
 
+    console.log(env);
+    console.log(env["BOT_ID"]);
+    console.log(bot_id);
     // early return
     if (bot_id != env["BOT_ID"]) {
-      console.log("The mentioned app is not thanks bot.");
+      const response = "ERROR: The mentioned app is not thanks bot.";
+      console.log(response);
+      return { outputs: { response } };
     }
 
     const thanksObject = {
