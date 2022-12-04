@@ -82,7 +82,7 @@ export default SlackFunction(FunctionDefinition, async ({ inputs, client }) => {
     console.log(res);
   }
 
-  const response = `@${user_id} was thanked ${count} times :tada:`;
+  const response = `<@${user_id}> was thanked ${count} times :tada:`;
   return { outputs: { response } };
 });
 
