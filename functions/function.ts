@@ -40,11 +40,22 @@ export const FunctionDefinition = DefineFunction({
 export default SlackFunction(
   FunctionDefinition,
   async ({ inputs, client, env }) => {
+    let response;
+
     console.log(inputs);
     const { message } = inputs;
     console.log(`inputs: ${message}`);
-    const parsedMsg = parseInputs(message);
+    const parsedMsg = parseInputs(message).filter((x: string) => x.length > 0);
+
     console.log(`parsedarray: ${parsedMsg}`);
+
+    if (parsedMsg.length == 0) {
+      // early return
+      response = `usage: <@${
+        env["BOT_ID"]
+      }> @people-youd-like-to-thank message`;
+      return { outputs: { response } };
+    }
 
     const uuid = crypto.randomUUID();
     const bot_id = parsedMsg[0];
@@ -101,7 +112,7 @@ export default SlackFunction(
       console.log(res);
     }
 
-    const response = `<@${user_id}> was thanked ${count} times :tada:`;
+    response = `<@${user_id}> was thanked ${count} times :tada:`;
     return { outputs: { response } };
   },
 );
